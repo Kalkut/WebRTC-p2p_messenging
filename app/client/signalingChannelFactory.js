@@ -1,4 +1,4 @@
-function SignalingChannel(eventEmmiter){
+function SignalingChannel(eventEmmiter, callee){
 
     var _ws;
     var self = this;
@@ -12,7 +12,7 @@ function SignalingChannel(eventEmmiter){
     }
 
     function _onConnectionEstablished(){
-        _sendMessage('init');
+        if(!callee) _sendMessage('init');
     }
 
     function _onClose(){
@@ -112,8 +112,8 @@ function SignalingChannel(eventEmmiter){
     };
 }
 
-window.createSignalingChannel = function(url, eventEmmiter){
-    var signalingChannel = new SignalingChannel(eventEmmiter);
+window.createSignalingChannel = function(url, eventEmmiter, callee){
+    var signalingChannel = new SignalingChannel(eventEmmiter, callee);
     signalingChannel.connectToTracker(url);
     return signalingChannel;
 };

@@ -4,7 +4,7 @@ function initCallee(messageCallback, eventEmitter){
     var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
     
     var wsUri = "ws://localhost:8090/";
-    var signalingChannel = createSignalingChannel(wsUri, eventEmitter);
+    var signalingChannel = createSignalingChannel(wsUri, eventEmitter, true);
     var servers = { iceServers: [{urls: "stun:stun.1.google.com:19302"}] };
 
     function createPeerConnection(peerId){
