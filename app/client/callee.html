@@ -6,13 +6,14 @@
     <script src="signalingChannelFactory.js"></script>
     <script src="callee.js"></script>
     <script language="javascript" type="text/javascript">
-        var CALLEE_ID = 2;
+        var eventEmitter = document.createElement('event-emitter');
+
         window.addEventListener("load", function(){
             var received = document.getElementById('received')
             initCallee(function(message){
                 var newText = document.createTextNode(message);
                 received.appendChild(newText);
-            });
+            }, eventEmitter);
             document.getElementById("send").onclick= function(){
                 var message = document.getElementById('message').value;
                 channel.send(message);

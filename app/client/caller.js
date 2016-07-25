@@ -1,10 +1,10 @@
-function initCaller(messageCallback){
+function initCaller(messageCallback, eventEmmiter){
     var RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription;
     var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
     var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
 
     var wsUri = "ws://localhost:8090/";
-    var signalingChannel = createSignalingChannel(wsUri, CALLER_ID);
+    var signalingChannel = createSignalingChannel(wsUri, eventEmmiter);
     var servers = {iceServers: [{urls: "stun:stun.1.google.com:19302"}]};
     
     function startCommunication(peerId) {

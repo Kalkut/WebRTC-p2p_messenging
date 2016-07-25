@@ -1,4 +1,5 @@
 var  connectedPeers = {};
+var id = 0
 function onMessage(ws, message){
     var type = message.type;
     switch (type) {
@@ -12,16 +13,34 @@ function onMessage(ws, message){
             onAnswer(message.answer, message.destination, ws.id);
             break;
         case "init":
-            onInit(ws, message.init);
+            onInit(ws);
             break;
         default:
             throw new Error("invalid message type");
     }
 }
 
-function onInit(ws, id){
-    console.log("init from peer:", id);
+function onInit(ws){
+    console.log("init from peer:", ++id);
     ws.id = id;
+
+    ws.send(JSON.stringify({
+        type: 'id',
+        id: id
+    }))
+
+    ws.send(JSON.stringify({
+        type: 'peers',
+        peers: Object.keys(connectedPeers)
+    }))
+
+    Object.keys(connectedPeers).forEach(function (peer) {
+        connectedPeers[peer].send(JSON.stringify({
+            type: 'connection',
+            id: id
+        }))
+    })
+
     connectedPeers[id] = ws;
 }
 

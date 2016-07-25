@@ -6,17 +6,53 @@
     <script src="signalingChannelFactory.js"></script>
     <script src="caller.js"></script>
     <script language="javascript" type="text/javascript">
-        var CALLER_ID = 1;
+        var eventEmitter = document.createElement('event-emitter');
+
+
         window.addEventListener("load", function(){
             var received = document.getElementById('received')
+            var peers = document.getElementById('peers')
+
+            function addPeer (id) {
+                var newPeer = document.createElement('li');
+                newPeer.id = id;
+                newPeer.innerText = 'Peer n°' + id;
+                peers.appendChild(newPeer);
+            }
+
+            eventEmitter.addEventListener('id', function (e) {
+                console.log(e.detail, 'id fetched')
+                window.id = e.detail;
+            })
+
+            eventEmitter.addEventListener('connection', function (e) {
+                console.log('connection', e.detail);
+                addPeer(e.detail);
+            })
+
+            eventEmitter.addEventListener('peers', function (e) {
+                
+                e.detail
+                .filter(function (peer) {return +peer !== window.id })
+                
+                //.forEach(addPeer)
+            })
+
+            eventEmitter.addEventListener('disconnection', function (e) {
+                var lostPeer = document.getElementById(e.detail);
+                lostPeer.parentNode.removeChild(lostPeer);
+            })
+
             initCaller(function(message){
                 var newText = document.createTextNode(message);
                 received.appendChild(newText);
-            });
+            }, eventEmitter);
+            
             document.getElementById("send").onclick= function(){
                 var message = document.getElementById('message').value;
                 channel.send(message);
             };
+            
             document.getElementById("start").onclick= function(){
                 startCommunication(2);
             };
@@ -29,5 +65,6 @@
     <textarea id="message"></textarea>
     <p id="received"></p>
     <button id="send">Send message</button>
+    <ul id="peers"></ul>
 </body>
 </html>

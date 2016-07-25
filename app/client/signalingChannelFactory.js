@@ -1,4 +1,4 @@
-function SignalingChannel(id){
+function SignalingChannel(eventEmmiter){
 
     var _ws;
     var self = this;
@@ -12,7 +12,7 @@ function SignalingChannel(id){
     }
 
     function _onConnectionEstablished(){
-        _sendMessage('init', id);
+        _sendMessage('init');
     }
 
     function _onClose(){
@@ -35,6 +35,18 @@ function SignalingChannel(id){
                 break;
             case "answer":
                 self.onAnswer(objMessage.answer, objMessage.source);
+                break;
+            case "id":
+                onId(objMessage.id);
+                break;
+            case "connection":
+                onConnection(objMessage.id);
+                break;
+            case "disconnection":
+                onDisconnection(objMessage.id);
+                break;
+            case "peers":
+                onPeers(objMessage.peers);
                 break;
             default:
                 throw new Error("invalid message type");
@@ -62,6 +74,22 @@ function SignalingChannel(id){
         
     }
 
+    function onId (id) {
+        eventEmmiter.dispatchEvent(new CustomEvent('id', { detail: id }));
+    }
+
+    function onConnection (id) {
+        eventEmmiter.dispatchEvent(new CustomEvent('connection', { detail: id }));
+    }
+
+    function onDisconnection (id) {
+        eventEmmiter.dispatchEvent(new CustomEvent('disconnection', { detail: id }));
+    }
+
+    function onPeers (peers) {
+        eventEmmiter.dispatchEvent(new CustomEvent('peers', { detail: peers }));
+    }
+
     this.connectToTracker = connectToTracker;
     this.sendICECandidate = sendICECandidate;
     this.sendOffer = sendOffer;
@@ -83,8 +111,8 @@ function SignalingChannel(id){
     };
 }
 
-window.createSignalingChannel = function(url, id){
-    var signalingChannel = new SignalingChannel(id);
+window.createSignalingChannel = function(url, eventEmmiter){
+    var signalingChannel = new SignalingChannel(eventEmmiter);
     signalingChannel.connectToTracker(url);
     return signalingChannel;
 };
