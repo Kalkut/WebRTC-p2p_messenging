@@ -87,6 +87,7 @@ function SignalingChannel(eventEmmiter){
     }
 
     function onPeers (peers) {
+        console.log('on peers', peers)
         eventEmmiter.dispatchEvent(new CustomEvent('peers', { detail: peers }));
     }
 

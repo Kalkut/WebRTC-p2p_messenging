@@ -7,6 +7,7 @@
     <h4>You are dialing with <span id="callee">no one</span></h4>
     <script src="signalingChannelFactory.js"></script>
     <script src="caller.js"></script>
+    <script src="callee.js"></script>
     <script language="javascript" type="text/javascript">
         var eventEmitter = document.createElement('event-emitter');
 
@@ -44,8 +45,7 @@
                 
                 e.detail
                 .filter(function (peer) {return +peer !== window.id })
-                
-                //.forEach(addPeer)
+                .forEach(addPeer)
             })
 
             eventEmitter.addEventListener('disconnection', function (e) {
