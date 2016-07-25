@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Caller page</title>
+    <h4 id="identity"></h4>
+    <h4>You are dialing with <span id="callee">no one</span></h4>
     <script src="signalingChannelFactory.js"></script>
     <script src="caller.js"></script>
     <script language="javascript" type="text/javascript">
@@ -12,11 +14,19 @@
         window.addEventListener("load", function(){
             var received = document.getElementById('received')
             var peers = document.getElementById('peers')
+            var callee = document.getElementById('callee')
 
             function addPeer (id) {
                 var newPeer = document.createElement('li');
+                
                 newPeer.id = id;
                 newPeer.innerText = 'Peer n°' + id;
+                
+                newPeer.onclick = function () {
+                    startCommunication(+newPeer.id)
+                    callee.innerText = 'Peer n°' + newPeer.id
+                }
+                
                 peers.appendChild(newPeer);
             }
 
