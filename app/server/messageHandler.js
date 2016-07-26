@@ -31,9 +31,7 @@ function onId(ws) {
     ws.send(JSON.stringify({
         type: 'id',
         id: id
-    }), function (err) {
-        console.log(err);
-    })
+    }), function (err) {})
 
     // Callee or caller don't matter: closed is closed
     ws.on('close', function () {
@@ -44,9 +42,7 @@ function onId(ws) {
             connectedPeers[peer].send(JSON.stringify({
                 type: 'disconnection',
                 id: ws.id
-            }), function (err) {
-                console.log(err);
-            })
+            }), function (err) {})
         })
     })
 }
@@ -59,18 +55,14 @@ function onInit(ws){
     ws.send(JSON.stringify({
         type: 'peers',
         peers: Object.keys(connectedPeers)
-    }), function (err) {
-        console.log(err);
-    })
+    }), function (err) {})
 
     // Notify already connected peers
     Object.keys(connectedPeers).forEach(function (peer) {
         connectedPeers[peer].send(JSON.stringify({
             type: 'connection',
             id: ws.id
-        }), function (err) {
-            console.log(err);
-        })
+        }), function (err) {})
     })
 
     // Now our wocket can be added
