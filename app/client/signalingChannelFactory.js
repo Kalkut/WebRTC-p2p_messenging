@@ -12,7 +12,7 @@ function SignalingChannel(eventEmmiter, callee){
     }
 
     function _onConnectionEstablished(){
-        if(!callee) _sendMessage('init');
+        _sendMessage('id');
     }
 
     function _onClose(){
@@ -71,24 +71,24 @@ function SignalingChannel(eventEmmiter, callee){
 
     function sendAnswer(answer, destination){
         _sendMessage("answer", answer, destination);
-        
     }
 
     function onId (id) {
-        eventEmmiter.dispatchEvent(new CustomEvent('id', { detail: id }));
+        _sendMessage('init');
+        if(callee) eventEmmiter.dispatchEvent(new CustomEvent('id', { detail: id }));
     }
 
     function onConnection (id) {
-        eventEmmiter.dispatchEvent(new CustomEvent('connection', { detail: id }));
+        if(callee) eventEmmiter.dispatchEvent(new CustomEvent('connection', { detail: id }));
     }
 
     function onDisconnection (id) {
-        eventEmmiter.dispatchEvent(new CustomEvent('disconnection', { detail: id }));
+        if(callee) eventEmmiter.dispatchEvent(new CustomEvent('disconnection', { detail: id }));
     }
 
     function onPeers (peers) {
         console.log('on peers', peers)
-        eventEmmiter.dispatchEvent(new CustomEvent('peers', { detail: peers }));
+        if(callee) eventEmmiter.dispatchEvent(new CustomEvent('peers', { detail: peers }));
     }
 
     this.connectToTracker = connectToTracker;

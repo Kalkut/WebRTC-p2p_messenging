@@ -8,73 +8,10 @@
     <script src="signalingChannelFactory.js"></script>
     <script src="caller.js"></script>
     <script src="callee.js"></script>
-    <script language="javascript" type="text/javascript">
-        var eventEmitter = document.createElement('event-emitter');
-
-
-        window.addEventListener("load", function(){
-            var received = document.getElementById('received')
-            var peers = document.getElementById('peers')
-            var callee = document.getElementById('callee')
-
-            function addPeer (id) {
-                var newPeer = document.createElement('li');
-                
-                newPeer.id = id;
-                newPeer.innerText = 'Peer n°' + id;
-                
-                newPeer.onclick = function () {
-                    startCommunication(+newPeer.id)
-                    callee.innerText = 'Peer n°' + newPeer.id
-                }
-                
-                peers.appendChild(newPeer);
-            }
-
-            function printMessage (message) {
-                var newText = document.createTextNode(message);
-                received.appendChild(newText);
-            }
-
-            eventEmitter.addEventListener('id', function (e) {
-                console.log(e.detail, 'id fetched')
-                window.id = e.detail;
-            })
-
-            eventEmitter.addEventListener('connection', function (e) {
-                console.log('connection', e.detail);
-                addPeer(e.detail);
-            })
-
-            eventEmitter.addEventListener('peers', function (e) {
-                
-                e.detail
-                .filter(function (peer) {return +peer !== window.id })
-                .forEach(addPeer)
-            })
-
-            eventEmitter.addEventListener('disconnection', function (e) {
-                var lostPeer = document.getElementById(e.detail);
-                lostPeer.parentNode.removeChild(lostPeer);
-            })
-
-            initCaller(printMessage, eventEmitter);
-            initCallee(printMessage, eventEmitter);
-            
-            document.getElementById("send").onclick= function(){
-                var message = document.getElementById('message').value;
-                channel.send(message);
-            };
-            
-            document.getElementById("start").onclick= function(){
-                startCommunication(2);
-            };
-        }, false);
-    </script>
+    <script src="main.js"></script>
 </head>
 <body>
     <h2>Caller page</h2>
-    <button id="start">Start</button>
     <textarea id="message"></textarea>
     <p id="received"></p>
     <button id="send">Send message</button>

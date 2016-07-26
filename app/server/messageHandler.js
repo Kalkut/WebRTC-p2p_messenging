@@ -12,6 +12,9 @@ function onMessage(ws, message){
         case "answer":
             onAnswer(message.answer, message.destination, ws.id);
             break;
+        case "id":
+            onId(ws);
+            break;
         case "init":
             onInit(ws);
             break;
@@ -20,15 +23,31 @@ function onMessage(ws, message){
     }
 }
 
-function onInit(ws){
-    console.log("init from peer:", ++id);
-    ws.id = id;
+function onId(ws) {
+    ws.id = ++id;
 
+    console.log('on id', id)
     ws.send(JSON.stringify({
         type: 'id',
         id: id
     }))
 
+    ws.on('close', function () {
+        console.log('close', ws.id);
+        delete connectedPeers[ws.id];
+
+        Object.keys(connectedPeers).forEach(function (peer) {
+            connectedPeers[peer].send(JSON.stringify({
+                type: 'disconnection',
+                id: ws.id
+            }))
+        })
+    })
+}
+
+function onInit(ws){
+    console.log("init from peer:", ws.id);
+    
     ws.send(JSON.stringify({
         type: 'peers',
         peers: Object.keys(connectedPeers)
@@ -37,11 +56,11 @@ function onInit(ws){
     Object.keys(connectedPeers).forEach(function (peer) {
         connectedPeers[peer].send(JSON.stringify({
             type: 'connection',
-            id: id
+            id: ws.id
         }))
     })
 
-    connectedPeers[id] = ws;
+    connectedPeers[ws.id] = ws;
 }
 
 function onOffer(offer, destination, source){
