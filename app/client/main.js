@@ -62,7 +62,7 @@ window.addEventListener("load", function(){
     eventEmitter.addEventListener('disconnection', function (e) {
         console.log('disconnection', e.detail)
         var lostPeer = document.getElementById(e.detail);
-        lostPeer.parentNode.removeChild(lostPeer);
+        if(lostPeer && lostPeer.parentNode) lostPeer.parentNode.removeChild(lostPeer);
     })
     
     document.getElementById("send").onclick= function(){
