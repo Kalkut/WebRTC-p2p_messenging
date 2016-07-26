@@ -1,5 +1,6 @@
-var  connectedPeers = {};
+var connectedPeers = {}; // Possible evol: separate callee and callers
 var id = 0
+
 function onMessage(ws, message){
     var type = message.type;
     switch (type) {
@@ -23,15 +24,16 @@ function onMessage(ws, message){
     }
 }
 
+// Id definition is server's responsability
 function onId(ws) {
     ws.id = ++id;
 
-    console.log('on id', id)
     ws.send(JSON.stringify({
         type: 'id',
         id: id
     }))
 
+    // Callee or caller don't matter: closed is closed
     ws.on('close', function () {
         console.log('close', ws.id);
         delete connectedPeers[ws.id];
@@ -39,20 +41,23 @@ function onId(ws) {
         Object.keys(connectedPeers).forEach(function (peer) {
             connectedPeers[peer].send(JSON.stringify({
                 type: 'disconnection',
-                id: ws.id
+                id: ws.onId
             }))
         })
     })
 }
 
+// Id definition and initialization are distinct steps
 function onInit(ws){
     console.log("init from peer:", ws.id);
     
+    // The server is the most reliable source for peers
     ws.send(JSON.stringify({
         type: 'peers',
         peers: Object.keys(connectedPeers)
     }))
 
+    // Notify already connected peers
     Object.keys(connectedPeers).forEach(function (peer) {
         connectedPeers[peer].send(JSON.stringify({
             type: 'connection',
@@ -60,6 +65,7 @@ function onInit(ws){
         }))
     })
 
+    // Now our wocket can be added
     connectedPeers[ws.id] = ws;
 }
 

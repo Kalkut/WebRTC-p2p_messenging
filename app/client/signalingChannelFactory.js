@@ -12,6 +12,7 @@ function SignalingChannel(eventEmmiter, callee){
     }
 
     function _onConnectionEstablished(){
+        // Allows fetching of id from the server
         _sendMessage('id');
     }
 
@@ -22,7 +23,6 @@ function SignalingChannel(eventEmmiter, callee){
     function _onError(err){
         console.error("error:", err);
     }
-
 
     function _onMessage(evt){
         var objMessage = JSON.parse(evt.data);
@@ -73,8 +73,10 @@ function SignalingChannel(eventEmmiter, callee){
         _sendMessage("answer", answer, destination);
     }
 
+    // eventEmmiter transfers data required in main for things such as DOM manipulation
+
     function onId (id) {
-        _sendMessage('init');
+        _sendMessage('init'); // The server has access to the sending socket: id is not needed
         if(callee) eventEmmiter.dispatchEvent(new CustomEvent('id', { detail: id }));
     }
 
